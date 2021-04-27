@@ -2,7 +2,7 @@
 using Entities.Constants;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
-using System.Collections.Generic;
+using System;
 using System.Threading.Tasks;
 
 namespace Api.Controllers
@@ -11,20 +11,67 @@ namespace Api.Controllers
     [Route("api/[controller]/[action]")]
     public class DCandidateController : Controller
     {
-        [HttpGet]
-        public IEnumerable<dCandidate> GetAllDetails ()
+        private IMongoCollection<dCandidate> _candidateCollection;
+        
+        public DCandidateController(IMongoClient client)
         {
-            MongoClient client = new MongoClient();
-
-            var list = client.ListDatabases().ToList();
-
             IMongoDatabase database = client.GetDatabase(MongoConstants.dbName);
-            IMongoCollection<dCandidate> collection = database.GetCollection<dCandidate>(MongoConstants.dCandidateColletion);
+            _candidateCollection = database.GetCollection<dCandidate>(MongoConstants.dCandidateColletion);
+        }
 
-            //var a = collection.Find(x => x.Age == 26);
+        [HttpGet]
+        public async Task<IActionResult> GetAllCandidates()
+        {
+            try
+            {
+                return Ok(await _candidateCollection.Find(Builders<dCandidate>.Filter.Empty).ToListAsync());
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
-            return null;
-            return collection.Find(x => x.Age == 26).ToList();
+        [HttpPut]
+        public IActionResult GetCandidateById([FromBody]int candidateId)
+        {
+            try
+            {
+                var candidates = _candidateCollection.Find(x => x.CandidateId == candidateId).Single();
+                return Ok(candidates);
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpDelete]
+        public IActionResult DeleteCandidateById([FromBody] int candidateId)
+        {
+            try
+            {
+                var candidates = _candidateCollection.DeleteOne(x => x.CandidateId == candidateId);
+                return Ok(candidates.IsAcknowledged);
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPut]
+        public IActionResult AddCandidate([FromBody]dCandidate dCandidate)
+        {
+            try
+            {
+                _candidateCollection.InsertOne(dCandidate);
+                return Created("Candidate added.", dCandidate.Id);
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
     }
 }

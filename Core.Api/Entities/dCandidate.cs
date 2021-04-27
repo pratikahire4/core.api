@@ -16,13 +16,16 @@ namespace Entities
         [BsonElement("lastName")]
         public string lastName { get; set; }
 
-        //[BsonElement("bloodGroup")]
-        //public BloodGroups BloodGroup { get; set; }
+        [BsonElement("bloodGroup")]
+        public BloodGroups BloodGroup { get; set; }
 
         [BsonElement("age")]
         public int Age { get; set; }
 
         [BsonElement("address")]
         public string Address { get; set; }
+
+        [BsonElement("candidateId")]
+        public int CandidateId {get; set; }
     }
 }
