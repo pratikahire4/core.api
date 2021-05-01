@@ -7,18 +7,23 @@ using System.Threading.Tasks;
 
 namespace Api.Controllers
 {
+    ///Candidates controller
     [ApiController]
     [Route("api/[controller]/[action]")]
     public class DCandidateController : Controller
     {
         private IMongoCollection<dCandidate> _candidateCollection;
         
+        ///ctor
         public DCandidateController(IMongoClient client)
         {
             IMongoDatabase database = client.GetDatabase(MongoConstants.dbName);
             _candidateCollection = database.GetCollection<dCandidate>(MongoConstants.dCandidateColletion);
         }
 
+        /// <summary>
+        /// Fetches all candidates.
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetAllCandidates()
         {
@@ -32,6 +37,9 @@ namespace Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Fetches candidate by it's id.
+        /// </summary>
         [HttpPut]
         public IActionResult GetCandidateById([FromBody]int candidateId)
         {
@@ -46,6 +54,9 @@ namespace Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Deletes specified candidate.
+        /// </summary>
         [HttpDelete]
         public IActionResult DeleteCandidateById([FromBody] int candidateId)
         {
@@ -60,6 +71,9 @@ namespace Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Adds new candidates.
+        /// </summary>
         [HttpPut]
         public IActionResult AddCandidate([FromBody]dCandidate dCandidate)
         {
