@@ -8,6 +8,7 @@ namespace Entities
     public class dCandidate
     {
         [BsonId]
+        [BsonIgnoreIfDefault]
         public ObjectId Id { get; set; }
 
         [BsonElement("firstName")]
@@ -26,6 +27,6 @@ namespace Entities
         public string Address { get; set; }
 
         [BsonElement("candidateId")]
-        public int CandidateId {get; set; }
+        public int CandidateId { get; set; }
     }
 }

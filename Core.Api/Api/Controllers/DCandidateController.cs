@@ -9,11 +9,11 @@ namespace Api.Controllers
 {
     ///Candidates controller
     [ApiController]
-    [Route("api/[controller]/[action]")]
+    [Route("[controller]/[action]")]
     public class DCandidateController : Controller
     {
         private IMongoCollection<dCandidate> _candidateCollection;
-        
+
         ///ctor
         public DCandidateController(IMongoClient client)
         {
@@ -31,7 +31,7 @@ namespace Api.Controllers
             {
                 return Ok(await _candidateCollection.Find(Builders<dCandidate>.Filter.Empty).ToListAsync());
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }
@@ -40,15 +40,15 @@ namespace Api.Controllers
         /// <summary>
         /// Fetches candidate by it's id.
         /// </summary>
-        [HttpPut]
-        public IActionResult GetCandidateById([FromBody]int candidateId)
+        [HttpGet]
+        public IActionResult GetCandidateById(int candidateId)
         {
             try
             {
                 var candidates = _candidateCollection.Find(x => x.CandidateId == candidateId).Single();
                 return Ok(candidates);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }
@@ -65,7 +65,7 @@ namespace Api.Controllers
                 var candidates = _candidateCollection.DeleteOne(x => x.CandidateId == candidateId);
                 return Ok(candidates.IsAcknowledged);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }
@@ -75,14 +75,32 @@ namespace Api.Controllers
         /// Adds new candidates.
         /// </summary>
         [HttpPut]
-        public IActionResult AddCandidate([FromBody]dCandidate dCandidate)
+        public IActionResult AddCandidate([FromBody] dCandidate dCandidate)
         {
             try
             {
                 _candidateCollection.InsertOne(dCandidate);
                 return Created("Candidate added.", dCandidate.Id);
             }
-            catch(Exception ex)
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Updates an existing candidate.
+        /// </summary>
+        [HttpPut]
+        public async Task<IActionResult> UpdateCandidate([FromBody] dCandidate dCandidate)
+        {
+            try
+            {
+                var candidate = Builders<dCandidate>.Filter.Eq(x => x.CandidateId, dCandidate.CandidateId);
+                var result = await _candidateCollection.ReplaceOneAsync(candidate, dCandidate);
+                return Ok(result);
+            }
+            catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }
