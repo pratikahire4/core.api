@@ -9,13 +9,14 @@ namespace Entities
     {
         [BsonId]
         [BsonIgnoreIfDefault]
-        public ObjectId Id { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; }
 
         [BsonElement("firstName")]
         public string FirstName { get; set; }
 
         [BsonElement("lastName")]
-        public string lastName { get; set; }
+        public string LastName { get; set; }
 
         [BsonElement("bloodGroup")]
         public BloodGroups BloodGroup { get; set; }

@@ -2,7 +2,9 @@
 using Entities.Constants;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
+using MongoDB.Bson.Serialization.Serializers;
 using System;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Api.Controllers
@@ -12,7 +14,7 @@ namespace Api.Controllers
     [Route("[controller]/[action]")]
     public class DCandidateController : Controller
     {
-        private IMongoCollection<dCandidate> _candidateCollection;
+        private readonly IMongoCollection<dCandidate> _candidateCollection;
 
         ///ctor
         public DCandidateController(IMongoClient client)
@@ -58,7 +60,7 @@ namespace Api.Controllers
         /// Deletes specified candidate.
         /// </summary>
         [HttpDelete]
-        public IActionResult DeleteCandidateById([FromBody] int candidateId)
+        public IActionResult DeleteCandidateById(int candidateId)
         {
             try
             {
@@ -80,7 +82,7 @@ namespace Api.Controllers
             try
             {
                 _candidateCollection.InsertOne(dCandidate);
-                return Created("Candidate added.", dCandidate.Id);
+                return Created("Candidate added.", dCandidate.CandidateId);
             }
             catch (Exception ex)
             {
@@ -97,7 +99,7 @@ namespace Api.Controllers
             try
             {
                 var candidate = Builders<dCandidate>.Filter.Eq(x => x.CandidateId, dCandidate.CandidateId);
-                var result = await _candidateCollection.ReplaceOneAsync(candidate, dCandidate);
+                ReplaceOneResult result = await _candidateCollection.ReplaceOneAsync(candidate, dCandidate);
                 return Ok(result);
             }
             catch (Exception ex)
