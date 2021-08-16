@@ -1,9 +1,9 @@
 using Api.Tests.MoqProviders;
 using Entities;
-using Newtonsoft.Json;
 using System;
 using System.Net;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -32,7 +32,7 @@ namespace Api.Tests
         public async Task GetCandidatesById_Test(int id)
         {
             var responseMessage = await _client.GetAsync($"http://localhost:5000/DCandidate/GetCandidateById?candidateId={id}");
-            var response = JsonConvert.DeserializeObject<dCandidate>(await responseMessage.Content.ReadAsStringAsync());
+            var response = JsonSerializer.Deserialize<dCandidate>(await responseMessage.Content.ReadAsStringAsync());
             Assert.Equal(id, response.CandidateId);
         }
 
@@ -43,7 +43,7 @@ namespace Api.Tests
         public async Task AddCandidates_Test(int candidateId)
         {
             var req = dCandidateProvider.GetRequestForAddCandidate(candidateId);
-            var response = await _client.PutAsync("http://localhost:5000/DCandidate/AddCandidate", new StringContent(JsonConvert.SerializeObject(req), System.Text.Encoding.UTF8, "application/json"));
+            var response = await _client.PutAsync("http://localhost:5000/DCandidate/AddCandidate", new StringContent(JsonSerializer.Serialize(req), System.Text.Encoding.UTF8, "application/json"));
             var responseContent = await response.Content.ReadAsStringAsync();
             Assert.Equal($"{candidateId}", responseContent);
         }
@@ -55,7 +55,7 @@ namespace Api.Tests
         public async Task UpdateCandidate_Test(int candidateId)
         {
             var req = dCandidateProvider.GetRequestForUpdateCandidate(candidateId);
-            var response = await _client.PutAsync("http://localhost:5000/DCandidate/UpdateCandidate", new StringContent(JsonConvert.SerializeObject(req), System.Text.Encoding.UTF8, "application/json"));
+            var response = await _client.PutAsync("http://localhost:5000/DCandidate/UpdateCandidate", new StringContent(JsonSerializer.Serialize(req), System.Text.Encoding.UTF8, "application/json"));
             //var responseContent = JsonConvert.DeserializeObject<ReplaceOneResult>(await response.Content.ReadAsStringAsync());
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }

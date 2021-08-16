@@ -2,9 +2,9 @@
 
 namespace Api.Tests.MoqProviders
 {
-    public static class dCandidateProvider
+    internal static class dCandidateProvider
     {
-        public static dCandidate GetRequestForAddCandidate(int candidateId)
+        internal static dCandidate GetRequestForAddCandidate(int candidateId)
         {
             return new dCandidate()
             {
@@ -17,7 +17,7 @@ namespace Api.Tests.MoqProviders
             };
         }
 
-        public static dCandidate GetRequestForUpdateCandidate(int candidateId)
+        internal static dCandidate GetRequestForUpdateCandidate(int candidateId)
         {
             return new dCandidate()
             {
