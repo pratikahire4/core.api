@@ -8,13 +8,15 @@ namespace Entities
     public class dCandidate
     {
         [BsonId]
-        public ObjectId Id { get; set; }
+        [BsonIgnoreIfDefault]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; }
 
         [BsonElement("firstName")]
         public string FirstName { get; set; }
 
         [BsonElement("lastName")]
-        public string lastName { get; set; }
+        public string LastName { get; set; }
 
         [BsonElement("bloodGroup")]
         public BloodGroups BloodGroup { get; set; }
@@ -26,6 +28,6 @@ namespace Entities
         public string Address { get; set; }
 
         [BsonElement("candidateId")]
-        public int CandidateId {get; set; }
+        public int CandidateId { get; set; }
     }
 }
